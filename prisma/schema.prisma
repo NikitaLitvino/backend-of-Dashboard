@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  name  String
+  adress String?
+  workRole String?
+  password String
+  sales Sale[] @relation(name: "sales")
+  buying Sale[] @relation(name: "buying")
+  tasks CalendarTask[] 
+}
+
+model CalendarTask{
+  id Int @id @default(autoincrement())
+  startDate Int
+  long Int
+  text String
+  user User @relation(fields: [userId], references: [id])
+  userId Int
+}
+
+model Sale {
+  id Int @id @default(autoincrement())
+  buyer User @relation( fields: [buyerId], references: [id], name: "buying")
+  buyerId Int
+  projectName String
+  projectDescription String
+  startDate Int
+  weeks Int
+  budget String
+  status Status
+  worker Worker
+  saler User @relation(fields: [salerId], references: [id], name: "sales")
+  salerId Int
+}
+
+enum Worker {
+  PixelAdmin 
+  Ample
+}
+
+enum Status{
+  Active
+  Pending
+  Completed
+  Cancel
+}
